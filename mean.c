@@ -52,8 +52,6 @@ int main(int argc, char **argv)
 
 			FILE * file = fopen(filename, "r");
 
-			printf("a\n");
-
 			if (file == NULL) {
 				perror("FILE ERROR");
 				exit(EXIT_FAILURE);
