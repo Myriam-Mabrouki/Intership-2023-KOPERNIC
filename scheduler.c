@@ -5,6 +5,7 @@
 
 /* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ammunition/ammunition.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/anagram/anagram.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/audiobeam/audiobeam.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h"
@@ -23,7 +24,8 @@
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h" */
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h" */
 
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
