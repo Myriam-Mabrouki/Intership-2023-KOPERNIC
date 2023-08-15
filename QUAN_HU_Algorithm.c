@@ -38,6 +38,10 @@ typedef struct _speedSet {
     struct _speedSet * next;
 } SpeedSet;
 
+typedef struct _schedulingPoints {
+    int val;
+    struct _schedulingPoints * next;
+} SchedulingPoints;
 
 
 /* Computes the earliest scheduling point of a job Jn based on a set of jobs */
@@ -91,17 +95,63 @@ float minimum_constant_speed (Set s, int ta, int tb) {
     return (1.0)sum/(tb-ta);
 } 
 
-Interval_and_speed essential_interval_Jn (int TE, int TL, Set s) {
+SchedulingPoints * create_scheduling_point(SchedulingPoints * sp, int val) {
+    SchedulingPoints * new = (SchedulingPoints *) malloc (sizeof(SchedulingPoints));
+    new->val = val;
+    new->next = sp;
+    return new;
+}
+
+Interval_and_speed essential_interval_Jn (int TE, int TL, Set s, Job * j) {
     int ta_prim , tb;
     int ta = TE;
     int tb_prim = TL;
 
+    Job * current = s.head;
+    //We create a set of j-scheduling points
+    SchedulingPoints * sp = create_scheduling_point(NULL, j->D);
+    while (current != NULL) {
+        sp = create_scheduling_point(sp, current.O);
+        current = current->next;
+    }
+
     while (ta != ta_prim || tb_prim != tb) {
         ta = ta_prim;
         tb_prim = tb;
-        for () {
 
+        int min = -1;
+        SchedulingPoints * curr = sp;
+        while (curr != NULL) {
+            if (curr->val >= ta && curr->val <= TL) {
+                if (min == -1){
+                    min = curr->val;
+                }
+                else {
+                    int tmp = minimum_constant_speed (s, ta, curr->val);
+                    if (tmp < min) {
+                        min = curr->val;
+                    }
+                }
+            }
         }
+        tb = min;
+
+        int max = -1;
+        SchedulingPoints * curr = sp;
+        while (curr != NULL) {
+            if (curr->val >= TE && curr->val <= ta) {
+                if (max == -1){
+                    max = curr->val;
+                }
+                else {
+                    int tmp = minimum_constant_speed (s, curr->val; tb);
+                    if (tmp < max) {
+                        max = curr->val;
+                    }
+                }
+            }
+        }
+        ta_prim = max;
     }
 
     Interval_and_speed res;
