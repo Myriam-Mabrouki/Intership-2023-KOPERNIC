@@ -1,9 +1,11 @@
+#define _GNU_SOURCE  
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <errno.h>
 
-/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ammunition/ammunition.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/anagram/anagram.h"
@@ -25,9 +27,9 @@
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h" */
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h"
 
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
+/* #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/ammunition/ammunition.h"
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/anagram/anagram.h"
@@ -49,11 +51,10 @@
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
 #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/statemate/statemate.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/susan/susan.h"
+#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/susan/susan.h" */
 
 int main () {
-    
-    main_adpcm_enc();
+    /* main_adpcm_dec();
     main_ammunition();
     main_audiobeam();
     main_cjpeg_transupp();
@@ -73,13 +74,31 @@ int main () {
     main_rijndael_dec();
     main_rijndael_enc();
     main_statemate();
-    main_susan();
+    main_susan(); */
+    int i = 0;
     pthread_t thA, thB;
-    pthread_create(&thA, NULL, (void *) main_adpcm_dec, NULL);
-    pthread_create(&thB, NULL, (void *) main_anagram, NULL);
-    pthread_setschedprio(thA, -20);
-    pthread_setschedprio(thB, -19);
-    pthread_join(thA, NULL);
-    pthread_join(thB, NULL);
+    int err = 0;
+    while (i < 100) {
+        printf("%d\n", i);
+        if (i > 0) err = pthread_tryjoin_np(thA, NULL);
+        if (err != 0) {
+            perror("Deadline miss\n");
+            return 1;
+        }
+        pthread_create(&thA, NULL, (void *) main_ndes, NULL);
+        pthread_setschedprio(thA, -20);
+        printf("a %d\n", i);
+        sleep(1);
+        if (i > 0) err = pthread_tryjoin_np(thB, NULL);
+        if (err != 0) {
+            perror("Deadline miss\n");
+            return 1;
+        }
+        pthread_create(&thB, NULL, (void *) main_dijkstra, NULL);
+        pthread_setschedprio(thB, -19);
+        sleep(1);
+        i++;
+    } 
+    
     return 0;
 }
