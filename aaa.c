@@ -95,7 +95,9 @@ SchedulingPoints * create_scheduling_point (SchedulingPoints * sp, int val, Job 
     SchedulingPoints * new = (SchedulingPoints *) malloc (sizeof(SchedulingPoints));
     new->val = val;
     new->job = job;
-
+    new->index = 0;
+    new->next = sp;
+    return new;
 
     //We sort at the beginning
     if (sp == NULL) {
@@ -113,21 +115,21 @@ SchedulingPoints * create_scheduling_point (SchedulingPoints * sp, int val, Job 
             curr = sp;
         }
         else {
-            int i = 1;
+            int i = 0;
             while (curr->next != NULL) {
+                i++;
                 if (new->val <= curr->next->val) {
                     new->next = curr->next;
                     curr->next = new;
                     new->index = i;
                     break;
                 }
-                i++;
                 curr = curr->next;
             }
             if (curr->next == NULL) {
                 curr->next = new;
                 new->next = NULL;
-                new->index = i;
+                new->index = ++i;
             }
         }
         curr = curr->next->next; //We go to the element next to the one we just added
@@ -214,118 +216,9 @@ int ** init_matrix (int n) {
 
 
 
-IntervalSpeed essential_interval_Jn (int TE, int TL, JobSet * js, Job job) {
-
-    SchedulingPoints ta_prim = {job.O, -1, &job, NULL};
-    SchedulingPoints tb = {job.O, -1, &job, NULL};
-    SchedulingPoints ta = {TE, -1, &job, NULL};
-    SchedulingPoints tb_prim = {TL, -1, &job, NULL};
-
-    //We create a set of j-scheduling points
-    int nb_jobs = 0;
-    JobSet * curr_job = js;
-    SchedulingPoints * sp = NULL;
-    while (curr_job != NULL) {
-        sp = create_scheduling_point(sp, curr_job->job->O, curr_job->job);
-        curr_job = curr_job->next;
-        nb_jobs++;
-    }
-    sp = create_scheduling_point(sp, job.D, &job);
-
-
-    //We create our matrix of the sums of workloads according to the different scheduling points
-    int ** mat = init_matrix(nb_jobs+1);
-    SchedulingPoints * tmp = sp;
-    while (tmp->next) {
-        mat[tmp->index+1][tmp->index] = tmp->job->C;
-        tmp = tmp->next;
-    }
-
-    for (int k = 2; k <= nb_jobs; k++) {
-        int i = 0;
-        int j = k;
-        while (i <= nb_jobs && j <= nb_jobs) {
-            mat[j][i] = mat[j-1][i] + mat[j][i+1];
-            j++;
-            i++;
-        }
-    }
-
-
-    for (int i = 0; i <= nb_jobs; i++){
-        for (int j = 0; j <= nb_jobs; j++) {
-            printf("mat[%d][%d] : %d   ", i, j, mat[i][j]);
-        }
-        printf("\n");
-    }
-
-
-    tmp = sp;
-    while (tmp != NULL) {
-        if (tmp->val == ta_prim.val) {
-            ta_prim.index = tmp->index;
-            break;
-        }
-        tmp = tmp->next;
-    }
-
+IntervalSpeed essential_interval_Jn (int TE, int TL, JobSet * js, Job j) {
     
-    
-    while (ta.val != ta_prim.val || tb_prim.val != tb.val) {
-        ta.val = ta_prim.val;
-        ta.index = ta_prim.index;
-        tb_prim.val = tb.val;
-        tb_prim.index = tb.index;
-
-        float min_speed = -1;
-        SchedulingPoints * curr_sp = sp;
-        while (curr_sp != NULL) {
-            printf("val : %d index : %d\n", curr_sp->val, curr_sp->index);
-            if (curr_sp->val >= ta.val && curr_sp->val <= TL && curr_sp->val - ta.val != 0) {
-                printf("val : %d index : %d\n", curr_sp->val, curr_sp->index);
-                if (min_speed == -1){
-                    min_speed = ((float) mat[curr_sp->index][ta.index]) / (curr_sp->val - ta.val);
-                    tb.val = curr_sp->val;
-                    tb.index = curr_sp->index;
-                }
-                else {
-                    float speed = ((float) mat[curr_sp->index][ta.index]) / (curr_sp->val - ta.val);
-                    if (speed < min_speed) {
-                        min_speed = speed;
-                        tb.val = curr_sp->val;
-                        tb.index = curr_sp->index;
-                    }
-                }
-                printf("min : %d %d %.2f\n", ta.index, mat[curr_sp->index][ta.index], min_speed);
-            }
-            curr_sp = curr_sp->next;
-        }
-
-        float max_speed = -1;
-        curr_sp = sp;
-        while (curr_sp != NULL) {
-            if (curr_sp->val >= TE && curr_sp->val <= ta.val && tb.val - curr_sp->val != 0) {
-                float speed = ((float) mat[tb.index][curr_sp->index]) / (tb.val - curr_sp->val);
-                if (speed > max_speed) {
-                    max_speed = speed;
-                    ta_prim.val = curr_sp->val;
-                    ta_prim.index = curr_sp->index;
-                }
-                printf("max : %.2f\n", max_speed);
-            }
-            curr_sp = curr_sp->next;
-        }
-
-    }
-
-    IntervalSpeed res;
-    res.interval.ts = ta.val;
-    res.interval.tf = tb.val;
-    res.S = minimum_constant_speed(js, ta.val, tb.val);
-    
-    return res;
-    
-    /* int ta_prim = j.O, tb = j.O;
+    int ta_prim = j.O, tb = j.O;
     int ta = TE;
     int tb_prim = TL;
 
@@ -346,18 +239,21 @@ IntervalSpeed essential_interval_Jn (int TE, int TL, JobSet * js, Job job) {
         float min_speed = -1;
         SchedulingPoints * curr_sp = sp;
         while (curr_sp != NULL) {
-            if (curr_sp->val > ta && curr_sp->val <= TL) {
+            if (curr_sp->val > ta && curr_sp->val <= TL && curr_sp->val - ta) {
                 if (min_speed == -1){
                     min_speed = minimum_constant_speed (js, ta, curr_sp->val);
                     tb = curr_sp->val;
+                    printf("1\n");
                 }
                 else {
                     float speed = minimum_constant_speed (js, ta, curr_sp->val);
                     if (speed < min_speed) {
                         min_speed = speed;
                         tb = curr_sp->val;
+                        printf("2\n");
                     }
                 }
+                printf("%.2f\n", min_speed);
             }
             curr_sp = curr_sp->next;
         }
@@ -365,12 +261,14 @@ IntervalSpeed essential_interval_Jn (int TE, int TL, JobSet * js, Job job) {
         float max_speed = -1;
         curr_sp = sp;
         while (curr_sp != NULL) {
-            if (curr_sp->val >= TE && curr_sp->val <= ta) {
+            if (curr_sp->val >= TE && curr_sp->val <= ta && tb - curr_sp->val) {
                 float speed = minimum_constant_speed (js, curr_sp->val, tb);
                 if (speed > max_speed) {
                     max_speed = speed;
                     ta_prim = curr_sp->val;
+                    printf("3\n");
                 }
+                printf("%.2f\n", max_speed);
             }
             curr_sp = curr_sp->next;
         }
@@ -381,7 +279,7 @@ IntervalSpeed essential_interval_Jn (int TE, int TL, JobSet * js, Job job) {
     res.interval.tf = tb;
     res.S = minimum_constant_speed(js, ta, tb);
     
-    return res; */
+    return res;
 }
 
 void print_interval (Interval i) {
@@ -581,7 +479,7 @@ int main (int argc, char * argv[]) {
     print_job_set(js);
     printf("\n");
 
-    IntervalSpeed res = essential_interval_Jn(0, 10, js, j2);
+    IntervalSpeed res = essential_interval_Jn(0, 10, js, j3);
 
     print_interval(res.interval);
     printf(" S :  %.2f\n", res.S);
