@@ -123,7 +123,7 @@ int main () {
         return -1;
     }
     
-    set_interface_attribs (fd, 115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
+    set_interface_attribs (fd, 9600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0);                // set no blocking
 
     main_adpcm_dec(); //ok
@@ -152,6 +152,12 @@ int main () {
     int i = 0;
     pthread_t thA, thB, thC;
     int err = 0;
+    pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
+    pthread_setschedprio(thA, -20);
+    pthread_create(&thB, NULL, (void *) main_ammunition, NULL);
+    pthread_setschedprio(thB, -19);
+    pthread_create(&thC, NULL, (void *) main_susan, NULL);
+    pthread_setschedprio(thC, -18);
     while (i < 100) {
         write (fd, "begin\n", 7);
         printf("%d\n", i);
@@ -162,7 +168,6 @@ int main () {
         }
         pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
         pthread_setschedprio(thA, -20);
-        sleep(1);
         if (i > 0) err = pthread_tryjoin_np(thB, NULL);
         if (err != 0) {
             perror("Deadline miss\n");
