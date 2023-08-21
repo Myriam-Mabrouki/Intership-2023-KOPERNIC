@@ -158,28 +158,44 @@ int main () {
     pthread_setschedprio(thB, -19);
     pthread_create(&thC, NULL, (void *) main_susan, NULL);
     pthread_setschedprio(thC, -18);
+    sleep(1);
     while (i < 100) {
         write (fd, "begin\n", 7);
         printf("%d\n", i);
-        if (i > 0) err = pthread_tryjoin_np(thA, NULL);
+        err = pthread_tryjoin_np(thA, NULL);
         if (err != 0) {
-            perror("Deadline miss");
-            exit(EXIT_FAILURE);
+            printf("Deadline miss\n");
+            pthread_cancel(thA);
         }
         pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
         pthread_setschedprio(thA, -20);
-        if (i > 0) err = pthread_tryjoin_np(thB, NULL);
+        err = pthread_tryjoin_np(thB, NULL);
         if (err != 0) {
-            perror("Deadline miss\n");
-            exit(EXIT_FAILURE);
+            printf("Deadline miss\n");
+            pthread_cancel(thB);
         }
         pthread_create(&thB, NULL, (void *) main_ammunition, NULL);
         pthread_setschedprio(thB, -19);
-        sleep(1);
-        if (i > 0) err = pthread_tryjoin_np(thC, NULL);
+        sleep(1);  
+
+        err = pthread_tryjoin_np(thA, NULL);
         if (err != 0) {
-            perror("Deadline miss\n");
-            exit(EXIT_FAILURE);
+            printf("Deadline miss\n");
+            pthread_cancel(thA);
+        }
+        pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
+        pthread_setschedprio(thA, -20);
+        err = pthread_tryjoin_np(thB, NULL);
+        if (err != 0) {
+            printf("Deadline miss\n");
+            pthread_cancel(thB);
+        }
+        pthread_create(&thB, NULL, (void *) main_ammunition, NULL);
+        pthread_setschedprio(thB, -19);
+        err = pthread_tryjoin_np(thC, NULL);
+        if (err != 0) {
+            printf("Deadline miss\n");
+            pthread_cancel(thC);
         }
         pthread_create(&thC, NULL, (void *) main_susan, NULL);
         pthread_setschedprio(thC, -18);
