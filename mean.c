@@ -32,9 +32,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	FILE * file_average = fopen("results_average.txt", "a"); 
-	FILE * file_etendue = fopen("results_etendue.txt", "a"); 
-	FILE * file_ecarttype = fopen("results_ecarttype.txt", "a"); 
+	FILE * file_res = fopen("results_mean.txt", "a"); 
 
 	char dirname[18] = "perf_measures";
 	strcat(dirname, argv[1]);
@@ -46,8 +44,10 @@ int main(int argc, char **argv)
 		if (cur->d_name[0] != '.') {  //Don't display hidden files
 			
 			char str[MAX] = "";
+			float mean, range, standard_deviation;
+			float ci_lower, ci_upper; //Confidence interval lower and upper limits
 			float sum = 0, max = -1, min = -1, variance = 0, tmp;
-			int i = 0;
+			int sample_size = 0;
 
 			char * filename = (char *) malloc(sizeof(char) * (strlen(dirname)+strlen(cur->d_name)+2));
 			strcpy(filename, dirname);
@@ -66,31 +66,31 @@ int main(int argc, char **argv)
 				if (max < tmp) max = tmp;
 				if (min == -1 || min > tmp) min = tmp;
 				sum += tmp;
-				i++;
+				sample_size++;
 			}
+			mean = sum / i;
+			range = max - min;
 
 			while (fgets(str, MAX, file) != NULL){
 				tmp = atol((const char *) str)
-				variance += ((tmp - (sum/i)) << 1);
+				variance += ((tmp - mean) << 1); //Square the difference of the sample mean and each individual result
 			}
-			variance /= i;
+			variance /= sample_size;
+			standard_deviation = sqrt(variance);
+			ci_lower = mean - (2.58 * (standard_deviation / sqrt(sample_size)));
+			ci_upper = mean + (2.58 * (standard_deviation / sqrt(sample_size)));
 			
 			fclose(file);
 			
 			free(filename);
 
-			fprintf(file_average, "%s %d  %f\n", substr(cur->d_name, 3, strlen(cur->d_name)-4), atoi(argv[1]), (sum/i));
-			fprintf(file_etendue, "%s %d  %f\n", substr(cur->d_name, 3, strlen(cur->d_name)-4), atoi(argv[1]), max-min);
-			fprintf(file_ecarttype, "%s %d  %f\n", substr(cur->d_name, 3, strlen(cur->d_name)-4), atoi(argv[1]), sqrt(variance));
+			fprintf(file_res, "%s %d - mean : %f, range, %f, standard deviation : %f, confidence interval : [%f, %f]\n", substr(cur->d_name, 3, strlen(cur->d_name)-4), atoi(argv[1]), mean, range, standard_deviation, ci_lower, ci_upper);
 		}
 	}
 
 	closedir(dir);
 	
-	fclose(file_average);
-	fclose(file_etendue);
-	fclose(file_ecarttype);
-
+	fclose(file_res);
 	return 0;
 }
 
