@@ -7,14 +7,14 @@
 
 #define MAX 256
 
+/* Substract the m characters from a string src of length n */
 char* substr(const char *src, int m, int n)
 {
     int len = n - m;
  
     char *dest = (char*)malloc(sizeof(char) * (len + 1));
 
-    for (int i = m; i < n && (*(src + i) != '\0'); i++)
-    {
+    for (int i = m; i < n && (*(src + i) != '\0'); i++) {
         *dest = *(src + i);
         dest++;
     }
@@ -27,17 +27,16 @@ char* substr(const char *src, int m, int n)
 
 int main(int argc, char **argv)
 {
-	if (argc != 2){
-		perror("Wrong number of arguments\n");
+	if (argc != 3){
+		perror("Wrong number of arguments. Follow: \"./executable_name frequency directory_name\"\n");
 		exit(EXIT_FAILURE);
 	}
 	
 	FILE * file_res = fopen("results_mean.txt", "a"); 
 
-	char dirname[18] = "perf_measures";
-	strcat(dirname, argv[1]);
+	char * dirname = argv[1];
 
-	DIR* dir = opendir(dirname);
+	DIR* dir = opendir(argv[2]);
 	struct dirent *cur;
 
 	while ((cur = readdir(dir))) {
@@ -49,18 +48,19 @@ int main(int argc, char **argv)
 			float sum = 0, max = -1, min = -1, variance = 0, tmp;
 			int sample_size = 0;
 
+			/* Open the current file */
 			char * filename = (char *) malloc(sizeof(char) * (strlen(dirname)+strlen(cur->d_name)+2));
 			strcpy(filename, dirname);
 			strcat(filename, "/");
 			strcat(filename, cur->d_name);
 
 			FILE * file = fopen(filename, "r");
-
 			if (file == NULL) {
 				perror("Error while opening file");
 				exit(EXIT_FAILURE);
 			}
 	
+			/* Computation of the mean and the range */
 			while (fgets(str, MAX, file) != NULL){
 				tmp = atol((const char *) str)
 				if (max < tmp) max = tmp;
@@ -71,6 +71,7 @@ int main(int argc, char **argv)
 			mean = sum / i;
 			range = max - min;
 
+			/* Computation of the variance deviation and the confidence interval */
 			while (fgets(str, MAX, file) != NULL){
 				tmp = atol((const char *) str)
 				variance += ((tmp - mean) << 1); //Square the difference of the sample mean and each individual result
