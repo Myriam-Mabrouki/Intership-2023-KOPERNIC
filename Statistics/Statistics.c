@@ -3,7 +3,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
-#include <math.h> 
+#include <math.h>
+#include <unistd.h>
 
 #define MAX 256
 
@@ -33,10 +34,9 @@ int main(int argc, char **argv)
 	}
 	
 	FILE * file_res = fopen("results_mean.txt", "a"); 
-
-	char * dirname = argv[1];
-
-	DIR* dir = opendir(argv[2]);
+	char cwd[MAX];
+	char * dirname = argv[2];
+	DIR* dir = opendir(strcat(strcat(getcwd(cwd, sizeof(cwd)), "/"), dirname));
 	struct dirent *cur;
 
 	while ((cur = readdir(dir))) {
@@ -62,19 +62,20 @@ int main(int argc, char **argv)
 	
 			/* Computation of the mean and the range */
 			while (fgets(str, MAX, file) != NULL){
-				tmp = atol((const char *) str)
+				tmp = atof((const char *) str);
+				printf("%2.f\n", tmp);
 				if (max < tmp) max = tmp;
 				if (min == -1 || min > tmp) min = tmp;
 				sum += tmp;
 				sample_size++;
 			}
-			mean = sum / i;
+			mean = sum / sample_size;
 			range = max - min;
 
 			/* Computation of the variance deviation and the confidence interval */
 			while (fgets(str, MAX, file) != NULL){
-				tmp = atol((const char *) str)
-				variance += ((tmp - mean) << 1); //Square the difference of the sample mean and each individual result
+				tmp = atof((const char *) str);
+				variance += (pow(tmp - mean, 2)); //Square the difference of the sample mean and each individual result
 			}
 			variance /= sample_size;
 			standard_deviation = sqrt(variance);
