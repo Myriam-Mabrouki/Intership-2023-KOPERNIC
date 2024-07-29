@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	FILE * file_res = fopen("results_mean.txt", "a"); 
+	FILE * file_res = fopen("statistical_results.txt", "a"); 
 	char cwd[MAX];
 	char * dirname = argv[2];
 	DIR* dir = opendir(strcat(strcat(getcwd(cwd, sizeof(cwd)), "/"), dirname));
@@ -71,6 +71,11 @@ int main(int argc, char **argv)
 			}
 			mean = sum / sample_size;
 			range = max - min;
+
+			/* Go back to the beginning of the file */
+			if (fseek(file, 0, SEEK_SET) != 0){
+				perror("FSEEK error");
+			}
 
 			/* Computation of the variance deviation and the confidence interval */
 			while (fgets(str, MAX, file) != NULL){
