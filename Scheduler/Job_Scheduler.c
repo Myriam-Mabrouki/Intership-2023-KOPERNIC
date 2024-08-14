@@ -1,4 +1,5 @@
-#define _GNU_SOURCE  
+#define _GNU_SOURCE
+//#define TACLeBENCH_librairies_path "/home/mmabrouk/Documents/tacle-bench/bench/librairies/"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -7,6 +8,8 @@
 #include <fcntl.h> 
 #include <string.h>
 #include <termios.h>
+#include <time.h>
+
 
 
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
@@ -32,30 +35,6 @@
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h"
-
-/* #include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/ammunition/ammunition.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/anagram/anagram.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/audiobeam/audiobeam.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/cjpeg_wrbmp/cjpeg_wrbmp.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/epic/epic.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/fmref/fmref.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/g723_enc/g723_enc.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/gsm_dec/gsm_dec.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/gsm_enc/gsm_enc.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/h264_dec/h264_dec.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/huff_dec/huff_dec.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/huff_enc/huff_enc.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/mpeg2/mpeg2.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/ndes/ndes.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/petrinet/petrinet.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/statemate/statemate.h"
-#include "/home/myriam/Videos/stage/tacle-bench/bench/librairies/susan/susan.h" */
 
 int set_interface_attribs (int fd, int speed, int parity)
 {
@@ -126,86 +105,60 @@ int main () {
     set_interface_attribs (fd, 9600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0);                // set no blocking
 
-    main_adpcm_dec(); //ok
-    main_adpcm_enc(); //ok
-    main_anagram(); //pas ok
-    main_ammunition(); //ok (ne pas utiliser car assign CPU ne marche pas)
-    main_audiobeam(); //pas ok
-    main_cjpeg_transupp(); //ok
-    main_cjpeg_wrbmp(); //ok
-    main_dijkstra(); //ok
-    main_epic(); //ok
-    main_fmref(); //ok
-    main_g723_enc(); //ok
-    main_gsm_dec(); //ok
-    main_gsm_enc(); //ok
-    main_h264_dec(); //ok
-    main_huff_dec(); //pas ok
-    main_huff_enc(); //ok
-    main_mpeg2(); //ok
-    main_ndes(); //ok
-    main_petrinet(); //ok
-    main_rijndael_dec(); //ok
-    main_rijndael_enc(); //ok
-    main_statemate(); //ok
-    main_susan(); //ok (ne pas utiliser car assign CPU ne marche pas)
-    int i = 0;
+    main_adpcm_dec(); //OK
+    main_adpcm_enc(); //OK
+    main_anagram(); //LIBRARY NOT OK
+    main_ammunition(); //OK (do not use, assign CPU is not working)
+    main_audiobeam(); //LIBRARY NOT OK
+    main_cjpeg_transupp(); //OK
+    main_cjpeg_wrbmp(); //OK
+    main_dijkstra(); //OK
+    main_epic(); //OK
+    main_fmref(); //OK
+    main_g723_enc(); //OK
+    main_gsm_dec(); //OK
+    main_gsm_enc(); //OK
+    main_h264_dec(); //OK
+    main_huff_dec(); //LIBRARY NOT OK
+    main_huff_enc(); //OK
+    main_mpeg2(); //OK
+    main_ndes(); //OK
+    main_petrinet(); //OK
+    main_rijndael_dec(); //OK
+    main_rijndael_enc(); //OK
+    main_statemate(); //OK
+    main_susan(); //OK (do not use, assign CPU is not working)
+    
     pthread_t thA, thB, thC;
-    int err = 0;
-    pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
-    pthread_setschedprio(thA, -20);
-    pthread_create(&thB, NULL, (void *) main_ammunition, NULL);
-    pthread_setschedprio(thB, -19);
-    pthread_create(&thC, NULL, (void *) main_susan, NULL);
-    pthread_setschedprio(thC, -18);
-    sleep(1);
-    while (i < 100) {
-        write (fd, "begin\n", 7);
-        printf("%d\n", i);
-        err = pthread_tryjoin_np(thA, NULL);
-        if (err != 0) {
-            printf("Deadline miss\n");
-            pthread_cancel(thA);
-        }
-        pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
-        pthread_setschedprio(thA, -20);
-        err = pthread_tryjoin_np(thB, NULL);
-        if (err != 0) {
-            printf("Deadline miss\n");
-            pthread_cancel(thB);
-        }
-        pthread_create(&thB, NULL, (void *) main_ammunition, NULL);
-        pthread_setschedprio(thB, -19);
-        sleep(1);  
+    clock_t start_t;
+    struct timespec remaining_time;
 
-        err = pthread_tryjoin_np(thA, NULL);
-        if (err != 0) {
-            printf("Deadline miss\n");
-            pthread_cancel(thA);
-        }
-        pthread_create(&thA, NULL, (void *) main_petrinet, NULL);
+    for(char i = 0; i < 500; i++){
+        write (fd, "begin\n", 7); //UART communication, beginnning of the loop
+
+        start_t = clock();
+
+        /* Releases */
+        pthread_create(&thA, NULL, (void *) main_statemate, NULL);
         pthread_setschedprio(thA, -20);
-        err = pthread_tryjoin_np(thB, NULL);
-        if (err != 0) {
-            printf("Deadline miss\n");
-            pthread_cancel(thB);
-        }
-        pthread_create(&thB, NULL, (void *) main_ammunition, NULL);
+        pthread_create(&thB, NULL, (void *) main_ndes, NULL);
         pthread_setschedprio(thB, -19);
-        err = pthread_tryjoin_np(thC, NULL);
-        if (err != 0) {
-            printf("Deadline miss\n");
-            pthread_cancel(thC);
-        }
-        pthread_create(&thC, NULL, (void *) main_susan, NULL);
+        pthread_create(&thC, NULL, (void *) main_cjpeg_wrbmp, NULL);
         pthread_setschedprio(thC, -18);
-        sleep(1);
-        i++;
-        write (fd, "end\n", 5);
+
+        clock_settime(clock() - start_t, remaining_time);
+
+        /* Check if there is a deadline miss */
+        if (pthread_timedjoin_np(thA, NULL, &remaining_time) != 0 && pthread_timedjoin_np(thB, NULL, &remaining_time) != 0 && pthread_timedjoin_np(thC, NULL, &remaining_time) != 0){
+            printf("Deadline miss !\n");
+            exit(EXIT_FAILURE); 
+        }
+
+        write (fd, "end\n", 5); //UART communication, end of the loop
     } 
 
-    char buf [100];
-    int n = read (fd, buf, sizeof buf);  // read up to 100 characters if ready to read  
+    char buf [500];
+    int n = read (fd, buf, sizeof buf);  // read up to 500 characters if ready to read  
     
     return 0;
 }
