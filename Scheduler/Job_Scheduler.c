@@ -10,16 +10,14 @@
 #include <termios.h>
 #include <time.h>
 
-
-
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
+/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ammunition/ammunition.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/anagram/anagram.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/audiobeam/audiobeam.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h" */
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_wrbmp/cjpeg_wrbmp.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
+/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/epic/epic.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/fmref/fmref.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/g723_enc/g723_enc.h"
@@ -28,13 +26,18 @@
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/h264_dec/h264_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/huff_dec/huff_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/huff_enc/huff_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/mpeg2/mpeg2.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/mpeg2/mpeg2.h" */
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ndes/ndes.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
+/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h" */
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h"
+/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h" */
+
+int max (int a, int b)
+{
+    return a >= b ? a : b;
+}
 
 int set_interface_attribs (int fd, int speed, int parity)
 {
@@ -75,8 +78,7 @@ int set_interface_attribs (int fd, int speed, int parity)
         return 0;
 }
 
-void
-set_blocking (int fd, int should_block)
+void set_blocking (int fd, int should_block)
 {
         struct termios tty;
         memset (&tty, 0, sizeof tty);
@@ -92,20 +94,21 @@ set_blocking (int fd, int should_block)
             perror ("error %d setting term attributes", errno); */
 }
 
-int main () {
+int main () 
+{
 
     char *portname = "/dev/ttyS0";
 
     int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
-    if (fd < 0){
+    /* if (fd < 0){
         //perror ("error %d opening %s: %s", errno, portname, strerror (errno));
         return -1;
     }
-    
-    set_interface_attribs (fd, 9600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-    set_blocking (fd, 0);                // set no blocking
+     */
+    //set_interface_attribs (fd, 9600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
+    //set_blocking (fd, 0);                // set no blocking
 
-    main_adpcm_dec(); //OK
+    /* main_adpcm_dec(); //OK
     main_adpcm_enc(); //OK
     main_anagram(); //LIBRARY NOT OK
     main_ammunition(); //OK (do not use, assign CPU is not working)
@@ -127,7 +130,7 @@ int main () {
     main_rijndael_dec(); //OK
     main_rijndael_enc(); //OK
     main_statemate(); //OK
-    main_susan(); //OK (do not use, assign CPU is not working)
+    main_susan(); //OK (do not use, assign CPU is not working) */
     
     pthread_t thA, thB, thC;
     clock_t start_t;
@@ -146,8 +149,9 @@ int main () {
         pthread_create(&thC, NULL, (void *) main_cjpeg_wrbmp, NULL);
         pthread_setschedprio(thC, -18);
 
-        clock_settime(clock() - start_t, remaining_time);
-
+        /* Deadline is set at  4.93ms after the release  */
+        clock_settime(max(0, 4.93 - (clock() - start_t)), &remaining_time);
+        //printf("test\n");
         /* Check if there is a deadline miss */
         if (pthread_timedjoin_np(thA, NULL, &remaining_time) != 0 && pthread_timedjoin_np(thB, NULL, &remaining_time) != 0 && pthread_timedjoin_np(thC, NULL, &remaining_time) != 0){
             printf("Deadline miss !\n");
