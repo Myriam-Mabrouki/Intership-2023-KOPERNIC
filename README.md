@@ -5,7 +5,8 @@ Let's see how is organised the repository.
 ## Time measures
 
 This folder cointains bash scripts to make or delete the executables of our benchmark. The folder has as well a script to do the execution time measures thanks to the <perf> command.
-To proceed, do as follows: 
+To proceed, do as follows:
+- enable executable modes ```chmod +x <name_of_the_executable>```
 - execute bash script to create executables
 - put executables in folder named "executables"
 - execute bash script to perform time measures
@@ -21,8 +22,8 @@ In this folder, there are time measures files.
 There is a c file in this folder that computes statistical results (mean, confidence interval...) of our data. 
 
 To use it, you have to:
-- compile it : "gcc -o stat Statistics.c"
-- execute it: ./stat <current_frequency> <name_of_the_folder_where_time_measures_are_done> 
+- compile it : ```gcc -o stat Statistics.c```
+- execute it: ```./stat <current_frequency> <name_of_the_folder_where_time_measures_are_done>```
 
 ## Speed policy
 
