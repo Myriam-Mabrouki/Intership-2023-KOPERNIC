@@ -10,14 +10,14 @@
 #include <termios.h>
 #include <time.h>
 
-/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ammunition/ammunition.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/anagram/anagram.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/audiobeam/audiobeam.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h" */
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_wrbmp/cjpeg_wrbmp.h"
-/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/epic/epic.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/fmref/fmref.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/g723_enc/g723_enc.h"
@@ -26,13 +26,13 @@
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/h264_dec/h264_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/huff_dec/huff_dec.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/huff_enc/huff_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/mpeg2/mpeg2.h" */
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/mpeg2/mpeg2.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ndes/ndes.h"
-/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h" */
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
 #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
-/* #include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h" */
+#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h"
 
 int max (int a, int b)
 {
@@ -99,7 +99,7 @@ int main ()
 
     char *portname = "/dev/ttyS0";
 
-    int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
+    //int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
     /* if (fd < 0){
         //perror ("error %d opening %s: %s", errno, portname, strerror (errno));
         return -1;
@@ -136,8 +136,8 @@ int main ()
     clock_t start_t;
     struct timespec remaining_time;
 
-    for(char i = 0; i < 500; i++){
-        write (fd, "begin\n", 7); //UART communication, beginnning of the loop
+    for(int i = 0; i < 500; i++){
+        //write (fd, "begin\n", 7); //UART communication, beginnning of the loop
 
         start_t = clock();
 
@@ -147,22 +147,22 @@ int main ()
         pthread_create(&thB, NULL, (void *) main_ndes, NULL);
         pthread_setschedprio(thB, -19);
         pthread_create(&thC, NULL, (void *) main_cjpeg_wrbmp, NULL);
-        pthread_setschedprio(thC, -18);
-
-        /* Deadline is set at  4.93ms after the release  */
-        clock_settime(max(0, 4.93 - (clock() - start_t)), &remaining_time);
-        //printf("test\n");
+        
         /* Check if there is a deadline miss */
+        //remaining_time.tv_sec  = 1 - ((clock() - start_t)/CLOCKS_PER_SEC);
+        remaining_time.tv_nsec = 4930000 - (((clock() - start_t)/CLOCKS_PER_SEC)*1000000000);
+        printf("%ld %09ld\n", remaining_time.tv_sec, remaining_time.tv_nsec);
+        
         if (pthread_timedjoin_np(thA, NULL, &remaining_time) != 0 && pthread_timedjoin_np(thB, NULL, &remaining_time) != 0 && pthread_timedjoin_np(thC, NULL, &remaining_time) != 0){
             printf("Deadline miss !\n");
             exit(EXIT_FAILURE); 
         }
 
-        write (fd, "end\n", 5); //UART communication, end of the loop
+        //write (fd, "end\n", 5); //UART communication, end of the loop
     } 
 
     char buf [500];
-    int n = read (fd, buf, sizeof buf);  // read up to 500 characters if ready to read  
+    //int n = read (fd, buf, sizeof buf);  // read up to 500 characters if ready to read  
     
     return 0;
 }
