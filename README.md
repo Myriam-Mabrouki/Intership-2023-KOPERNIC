@@ -11,7 +11,7 @@ To proceed, do as follows:
 - put executables in folder named "executables"
 - execute bash script to perform time measures
 
-The results are in the folder "perf_measures". There is one file per program.
+The results are in the folder "time_measures". There is one file per program.
 
 ## Results
 
@@ -27,7 +27,7 @@ To use it, you have to:
 
 ## Speed policy
 
-This folder has a c file containing an implementation of Quan and Hu's algorithm.
+This folder has a c file containing an implementation of Quan and Hu's heuristic ("Energy  efficient  fixed-priority  schedulingfor  real-time  systems  on  variable  voltage  processors", 2001).
 
 ## Scheduler
 
@@ -39,7 +39,7 @@ To proceed, do as follows:
 
 ## UART Communication
 
-There are files in this folder that allows us to enable UART communication when doing energy consumption measures.
+The files in this folder are here to test UART communication between the computer and the micro-controller.
 
 ## Others
 
