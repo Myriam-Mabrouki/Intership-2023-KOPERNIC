@@ -15,7 +15,7 @@ The results are in the folder "time_measures". There is one file per program.
 
 ## Results
 
-In this folder, there are time measures files.
+In this folder, there are time measures and energy consumption files.
 
 ## Statistics
 
@@ -36,6 +36,10 @@ To proceed, do as follows:
 - execute bash script
 - type the following command line : ```export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH```
 - compile : ```gcc -L/usr/lib -Wall -o sched Job_Scheduler.c -lndes -lstatemate -lcjpeg_wrbmp``` 
+
+## Energy consumption tests
+
+In this folder there are test programs that run function with few or a lot of memory accesses to check the differences when doing energy consumption.
 
 ## UART Communication
 
