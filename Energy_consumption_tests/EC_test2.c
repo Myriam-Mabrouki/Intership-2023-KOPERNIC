@@ -79,13 +79,13 @@ int main(int argv, char ** argc) {
     set_interface_attribs (fd, 115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0);                // set no blocking
 
+    system("cd /home/mabrouki/Documents/tacle-bench/bench/executables");
+    
     if (!atoi(argc[1])){
-        system("cd /home/mabrouki/Documents/tacle-bench/bench/executables");
         write (fd, "begin\n", 7);
         for (int i = 0; i < 500; i++){
             system("./mpeg2");
         }
-        write (fd, "end\n", 5);
     }
         
     else{
@@ -94,8 +94,9 @@ int main(int argv, char ** argc) {
         for (int i = 0; i < 500; i++){
             system("./statemate");
         }
-        write (fd, "end\n", 5);
     }
+
+    write (fd, "end\n", 5);
 
     char buf [100];
     read (fd, buf, sizeof buf); 
