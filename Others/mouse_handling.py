@@ -9,9 +9,9 @@ pyautogui.click(350, 1285)
 pyautogui.moveTo(200, 1670, duration = 1)
 pyautogui.click(200, 1670)
 
-i = 0
+i = 1
 
-while i != 3:
+while i <= 10:
     #Record recording
     pyautogui.moveTo(100, 1190, duration = 0.5)
     pyautogui.click(100, 1190)
@@ -35,7 +35,7 @@ while i != 3:
     pyautogui.moveTo(1000, 1150, duration = 0.5)
     pyautogui.click(1000, 1150)
 
-    name = 'measure'+str(i)
+    name = 'recording'+str(i)
 
     #Type the name of the recording
     pyautogui.typewrite(name)
@@ -49,7 +49,7 @@ while i != 3:
     pyautogui.click(button='right', x=200, y=1950)
 
     #Delete recording
-    pyautogui.moveTo(250, 1820, duration = 0.5)
-    pyautogui.click(250, 1820)
+    #pyautogui.moveTo(250, 1820, duration = 0.5)
+    #pyautogui.click(250, 1820)
 
     i = i + 1
