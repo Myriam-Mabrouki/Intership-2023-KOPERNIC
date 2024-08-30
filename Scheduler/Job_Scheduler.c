@@ -10,29 +10,29 @@
 #include <termios.h>
 #include <time.h>
 
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ammunition/ammunition.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/anagram/anagram.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/audiobeam/audiobeam.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/cjpeg_wrbmp/cjpeg_wrbmp.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/epic/epic.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/fmref/fmref.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/g723_enc/g723_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/gsm_dec/gsm_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/gsm_enc/gsm_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/h264_dec/h264_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/huff_dec/huff_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/huff_enc/huff_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/mpeg2/mpeg2.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/ndes/ndes.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
-#include "/home/mmabrouk/Documents/tacle-bench/bench/librairies/susan/susan.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/adpcm_dec/adpcm_dec.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/adpcm_enc/adpcm_enc.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/ammunition/ammunition.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/anagram/anagram.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/audiobeam/audiobeam.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/cjpeg_transupp/cjpeg_transupp.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/cjpeg_wrbmp/cjpeg_wrbmp.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/dijkstra/dijkstra.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/epic/epic.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/fmref/fmref.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/g723_enc/g723_enc.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/gsm_dec/gsm_dec.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/gsm_enc/gsm_enc.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/h264_dec/h264_dec.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/huff_dec/huff_dec.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/huff_enc/huff_enc.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/mpeg2/mpeg2.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/ndes/ndes.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/petrinet/petrinet.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/rijndael_dec/rijndael_dec.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/rijndael_enc/rijndael_enc.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/statemate/statemate.h"
+#include "/home/mabrouki/Documents/tacle-bench/bench/librairies/susan/susan.h"
 
 int max (int a, int b)
 {
@@ -97,7 +97,7 @@ void set_blocking (int fd, int should_block)
 int main ()
 {
 
-    /* char *portname = "/dev/ttyAMA0";
+    char *portname = "/dev/ttyAMA0";
 
     int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
     if (fd < 0){
@@ -106,7 +106,7 @@ int main ()
     }
 
     set_interface_attribs (fd, 115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-    set_blocking (fd, 0);                // set no blocking */
+    set_blocking (fd, 0);                // set no blocking
 
     /* main_adpcm_dec(); //OK
     main_adpcm_enc(); //OK
@@ -137,7 +137,7 @@ int main ()
     struct timespec remaining_time;
 
     for(int i = 0; i < 1000; i++){
-        //write (fd, "loop\n", 6); //UART communication, beginnning of the loop
+        write (fd, "loop\n", 6); //UART communication, beginnning of the loop
 
         start_t = clock();
 
@@ -160,7 +160,7 @@ int main ()
     }
 
     char buf [6000];
-    //read (fd, buf, sizeof buf);  // read up to 500 characters if ready to read
+    read (fd, buf, sizeof buf);  // read up to 500 characters if ready to read
 
     return 0;
 }
