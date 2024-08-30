@@ -56,7 +56,6 @@ int main () {
             char * tmp_power = "";
             while(fgets(line_power, 64, f_power) && begin > atof(tmp_power)) {
                 tmp_power = strtok (line_power, separators);
-                printf("%s\n", line_power);
             }
 
             while (fgets(line_power, 64, f_power) && end > atof(tmp_power)) {
@@ -66,10 +65,8 @@ int main () {
                 nb_frames++;
             }
 
-            printf("test %Lf %lld %s\n", power_frames_sum, nb_frames, tmp_power);
             power_sum += (power_frames_sum / nb_frames);
             nb_measures++;
-            printf("Average power %Lf %d\n", power_sum, nb_measures);
         }
 
         i++;
