@@ -54,12 +54,12 @@ int main () {
             long double power_frames_sum = 0;
             long long nb_frames = 0;
             char * tmp_power = "";
-            while(fgets(line_power, 64, f_power) && begin != atof(tmp_power)) {
+            while(fgets(line_power, 64, f_power) && begin > atof(tmp_power)) {
                 tmp_power = strtok (line_power, separators);
                 printf("%s\n", line_power);
             }
 
-            while (fgets(line_power, 64, f_power) && end != atof(tmp_power)) {
+            while (fgets(line_power, 64, f_power) && end > atof(tmp_power)) {
                 tmp_power = strtok (NULL, separators);
                 power_frames_sum += atof(tmp_power);
                 tmp_power = strtok (line_power, separators);
