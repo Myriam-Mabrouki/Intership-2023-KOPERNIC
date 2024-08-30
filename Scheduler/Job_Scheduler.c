@@ -96,7 +96,8 @@ void set_blocking (int fd, int should_block)
 
 int main ()
 {
-
+    setpriority(PRIO_PROCESS, 0, -20);
+    
     char *portname = "/dev/ttyAMA0";
 
     int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
@@ -136,8 +137,9 @@ int main ()
     clock_t start_t;
     struct timespec remaining_time;
 
+    write (fd, "begin\n", 7);
+
     for(int i = 0; i < 1000; i++){
-        write (fd, "loop\n", 6); //UART communication, beginnning of the loop
 
         start_t = clock();
 
@@ -150,8 +152,7 @@ int main ()
 
         /* Check if there is a deadline miss */
 
-        remaining_time.tv_sec = 4930000 - (((clock() - start_t)/CLOCKS_PER_SEC)*1000000000);
-        remaining_time.tv_nsec = 4930000000000000;
+        remaining_time.tv_nsec = 4930000 - (((clock() - start_t)/CLOCKS_PER_SEC)*1000000000);
 
         if (pthread_timedjoin_np(thA, NULL, &remaining_time) != 0 || pthread_timedjoin_np(thB, NULL, &remaining_time) != 0 || pthread_timedjoin_np(thC, NULL, &remaining_time) !=  0){
             printf("Deadline miss !\n");
@@ -159,8 +160,8 @@ int main ()
         } 
     }
 
-    char buf [6000];
-    read (fd, buf, sizeof buf);  // read up to 500 characters if ready to read
+    char buf [100];
+    read (fd, buf, sizeof buf);  // read up to 100 characters if ready to read
 
     return 0;
 }

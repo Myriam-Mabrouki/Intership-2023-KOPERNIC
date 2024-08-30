@@ -65,6 +65,9 @@ void set_blocking (int fd, int should_block)
 }
 
 int main(int argv, char ** argc) {
+
+    setpriority(PRIO_PROCESS, 0, -20);
+
     if (argv != 2) {
         perror("Wrong number of arguments");
         return EXIT_FAILURE;
@@ -79,19 +82,16 @@ int main(int argv, char ** argc) {
     set_interface_attribs (fd, 115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0);                // set no blocking
 
-    system("cd /home/mabrouki/Documents/tacle-bench/bench/executables");
-    
+    write (fd, "begin\n", 7);
+
     if (!atoi(argc[1])){
-        write (fd, "begin\n", 7);
-        for (int i = 0; i < 500; i++){
+        for (int i = 0; i < 100; i++){
             system("./mpeg2");
         }
     }
         
     else{
-        write (fd, "begin\n", 7);
-        system("cd /home/mabrouki/Documents/tacle-bench/bench/executables");
-        for (int i = 0; i < 500; i++){
+        for (int i = 0; i < 100; i++){
             system("./statemate");
         }
     }

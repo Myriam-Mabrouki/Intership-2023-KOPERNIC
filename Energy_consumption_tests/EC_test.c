@@ -8,6 +8,26 @@
 #include <string.h>
 #include <termios.h>
 #include <time.h>
+#include <sched.h>
+#include <assert.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+
+
+void assign_to_CPU ( int cpuid )
+{
+  cpu_set_t * cpusetp = NULL;
+  cpusetp = CPU_ALLOC(1);
+  if (cpusetp == NULL) {
+    perror("CPU_ALLOC");
+    exit(EXIT_FAILURE);
+
+  }
+  CPU_ZERO_S(CPU_ALLOC_SIZE(1), cpusetp);
+  CPU_SET_S(cpuid, CPU_ALLOC_SIZE(1), cpusetp);
+  sched_setaffinity(0, sizeof(*cpusetp), cpusetp);
+  CPU_FREE(cpusetp);
+}
 
 
 int set_interface_attribs (int fd, int speed, int parity)
@@ -88,6 +108,9 @@ long f_CPU(int nb) {
 
 
 int main (int argv, char ** argc) {
+
+    setpriority(PRIO_PROCESS, 0, -20);
+  
     if (argv != 3) {
         perror("Wrong number of arguments");
         return EXIT_FAILURE;
