@@ -8,6 +8,11 @@
 #include <string.h>
 #include <termios.h>
 #include <time.h>
+#include <sched.h>
+#include <assert.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+
 
 int set_interface_attribs (int fd, int speed, int parity)
 {
@@ -66,6 +71,7 @@ void set_blocking (int fd, int should_block)
 
 int main(int argv, char ** argc) {
 
+    //Set priority to the maximum
     setpriority(PRIO_PROCESS, 0, -20);
 
     if (argv != 2) {
@@ -73,6 +79,7 @@ int main(int argv, char ** argc) {
         return EXIT_FAILURE;
     }
 
+    // Enable UART communication
     char *portname = "/dev/ttyAMA0";
     int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
     if (fd < 0){
@@ -82,11 +89,12 @@ int main(int argv, char ** argc) {
     set_interface_attribs (fd, 115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0);                // set no blocking
 
+    // Inform the program has started
     write (fd, "begin\n", 7);
 
     if (!atoi(argc[1])){
         for (int i = 0; i < 100; i++){
-            system("./mpeg2");
+            system("./ammunition");
         }
     }
         
@@ -96,6 +104,7 @@ int main(int argv, char ** argc) {
         }
     }
 
+    // Inform the program has ended
     write (fd, "end\n", 5);
 
     char buf [100];
