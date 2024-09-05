@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <math.h>
 #include <dirent.h>
 
 void power_averages(FILE *f_power, FILE *f_uart){
@@ -14,7 +15,13 @@ void power_averages(FILE *f_power, FILE *f_uart){
     long double begin, end;
 
     long double power_sum = 0;
+    long double average_power = 0;
+    long double power_standard_deviation = 0;
+    long double power_array [100];
     long double time_sum = 0;
+    long double average_time = 0;
+    long double time_standard_deviation = 0;
+    long double time_array [100];
     int nb_measures = 0;
 
     // Read the content and 
@@ -57,14 +64,27 @@ void power_averages(FILE *f_power, FILE *f_uart){
 
             time_sum += nb_frames * 20; // Each frame represent a unit of 20 microseconds
             power_sum += (power_frames_sum / nb_frames);
+            power_array[nb_measures] = (power_frames_sum / nb_frames);
+            time_array[nb_measures] = nb_frames * 20;
             nb_measures++;
         }
 
         i++;
     }
-    
-    printf("Average execution time %Lf ms \n", (time_sum/nb_measures) / 1000); // Time is initially in microseconds and then converted in milliseconds
-    printf("Average power %Lf, nb measures %d\n", power_sum/nb_measures, nb_measures);
+
+    average_power = power_sum/nb_measures;
+    average_time = time_sum/nb_measures;
+
+    for (int k = 0; k < nb_measures; k++){
+        power_standard_deviation = (pow(power_array[k] - average_power, 2));
+        time_standard_deviation = (pow(time_array[k] - average_time, 2));
+    }
+
+    power_standard_deviation = sqrt(power_standard_deviation/nb_measures);
+    time_standard_deviation = sqrt(time_standard_deviation/nb_measures);
+    printf("Average execution time %Lf ms, Standard deviation : %Lf\n", average_time / 1000, time_standard_deviation); // Time then converted in milliseconds
+    printf("Average power %Lf, Standard deviation : %Lf, nb measures %d\n", average_power, power_standard_deviation, nb_measures);
+
 }
 
 int main () {
